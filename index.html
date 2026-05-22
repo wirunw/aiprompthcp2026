@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Prompt Library · บุคลากรทางการแพทย์ ม.นเรศวร</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0A3D5C;--teal:#0D9E8F;--teal2:#028090;--blue:#065A82;
+  --amber:#D97706;--purple:#7F77DD;--coral:#E05A30;--slate:#334155;
+  --muted:#64748B;--light:#F0F9F8;--white:#FFFFFF;--border:#E2E8F0;
+  --r-color:#0D9E8F;--f-color:#7F77DD;
+}
+body{font-family:'Sarabun',sans-serif;background:var(--light);color:var(--slate);min-height:100vh;font-size:15px}
+
+/* ── HEADER ── */
+.site-header{background:var(--navy);padding:20px 24px;border-bottom:3px solid var(--teal)}
+.header-inner{max-width:900px;margin:0 auto;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.header-tag{font-size:10px;font-weight:700;color:var(--teal);letter-spacing:1.5px;margin-bottom:6px;display:block}
+.header-title{font-size:22px;font-weight:700;color:white;margin-bottom:4px;line-height:1.3}
+.header-sub{font-size:12px;color:#A8D8D0}
+.header-badge{background:var(--teal);color:white;border-radius:12px;padding:10px 18px;text-align:center;flex-shrink:0}
+.badge-n{font-size:28px;font-weight:700;line-height:1}
+.badge-label{font-size:10px;color:#D0F0EB;margin-top:2px}
+.badge-sub{font-size:10px;color:#9FE1CB;margin-top:1px}
+
+/* ── RTF LEGEND ── */
+.legend-bar{background:white;border-bottom:1px solid var(--border);padding:10px 24px}
+.legend-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.legend-title{font-size:11px;font-weight:700;color:var(--muted);margin-right:6px;white-space:nowrap}
+.leg{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;background:#f8fafc}
+.leg-key{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:white;flex-shrink:0}
+.leg-text{font-size:11px;color:var(--slate);font-weight:600}
+.leg-desc{font-size:10px;color:var(--muted);margin-left:2px}
+
+/* ── TABS ── */
+.tabs-bar{background:white;border-bottom:1px solid var(--border);padding:0 24px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.tabs-inner{max-width:900px;margin:0 auto;display:flex;gap:0;overflow-x:auto;scrollbar-width:none}
+.tabs-inner::-webkit-scrollbar{display:none}
+.tab-btn{padding:14px 16px;border:none;background:transparent;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:6px;transition:all .15s}
+.tab-btn:hover{color:var(--slate)}
+.tab-btn.active{font-weight:700;border-bottom-color:var(--tab-color,var(--teal))}
+.tab-count{font-size:10px;font-weight:700;padding:2px 6px;border-radius:99px;background:#f1f5f9;color:var(--muted)}
+.tab-btn.active .tab-count{color:white}
+
+/* ── MAIN ── */
+.main{max-width:900px;margin:0 auto;padding:20px 24px}
+
+/* ── COPY ALL BAR ── */
+.copy-all-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px;padding:12px 16px;background:white;border-radius:10px;border:1px solid var(--border)}
+.cat-info{display:flex;align-items:center;gap:10px}
+.cat-emoji-lg{font-size:22px}
+.cat-name{font-size:14px;font-weight:700}
+.cat-count{font-size:11px;color:var(--muted)}
+.copy-all-btn{padding:8px 16px;border-radius:8px;border:1.5px solid var(--navy);background:white;color:var(--navy);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+.copy-all-btn:hover{background:var(--navy);color:white}
+.copy-all-btn.done{background:var(--teal);border-color:var(--teal);color:white}
+
+/* ── PROMPT CARD ── */
+.prompt-card{background:white;border:1px solid var(--border);border-radius:12px;margin-bottom:20px;overflow:hidden}
+.card-head{padding:14px 18px;border-bottom:1px solid #f8fafc;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.card-title{font-size:15px;font-weight:700;color:#0f172a;margin-bottom:3px}
+.card-target{font-size:11px;color:var(--muted)}
+.card-body{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+
+/* ── RTF SECTIONS ── */
+.rtf-section{}
+.rtf-label{display:inline-flex;align-items:center;gap:5px;border-radius:5px;padding:2px 9px;margin-bottom:6px}
+.rtf-key{font-size:11px;font-weight:800;letter-spacing:1px}
+.rtf-name{font-size:10px;font-weight:600}
+.rtf-box{background:#f8fafc;border-radius:8px;padding:10px 14px;font-size:13px;color:var(--slate);line-height:1.8;white-space:pre-wrap;border-left:3px solid transparent}
+
+/* ── SAMPLE SECTION ── */
+.sample-section{border-radius:8px;overflow:hidden;border:1px solid #FDE68A}
+.sample-head{background:#FEF3C7;padding:8px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.sample-head-left{display:flex;align-items:center;gap:7px}
+.sample-icon{font-size:13px}
+.sample-tag{font-size:10px;font-weight:700;color:#92400E;background:#FDE68A;padding:2px 7px;border-radius:4px;letter-spacing:.5px}
+.sample-label{font-size:12px;font-weight:600;color:#78350F}
+.sample-toggle{font-size:11px;color:#92400E;font-weight:600}
+.sample-body{background:#FFFBEB;padding:12px 14px;font-size:12.5px;color:#451A03;line-height:1.8;white-space:pre-wrap;border-top:1px solid #FDE68A}
+
+/* ── CARD FOOTER ── */
+.card-footer{padding:12px 18px;background:#fafafa;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;border:1.5px solid}
+.btn-prompt{background:white;color:var(--teal);border-color:var(--teal)}
+.btn-prompt:hover{background:#E1F5EE}
+.btn-full{color:white;border-color:transparent}
+.btn-sample{background:white;color:#92400E;border-color:#FDE68A}
+.btn-sample:hover{background:#FEF3C7}
+.btn.done{background:#22c55e!important;border-color:#22c55e!important;color:white!important}
+
+/* ── FOOTER ── */
+.site-footer{text-align:center;padding:24px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);margin-top:16px}
+.deploy-note{margin-top:8px;font-size:10px;color:#94a3b8}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .site-header{padding:16px}
+  .header-title{font-size:18px}
+  .main{padding:16px}
+  .card-head{flex-direction:column}
+  .card-footer{gap:6px}
+  .btn{font-size:11px;padding:6px 10px}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div>
+      <span class="header-tag">AI PROMPT LIBRARY · NARESUAN UNIVERSITY HOSPITAL · 22 MAY 2026</span>
+      <div class="header-title">ชุด Prompt สำเร็จรูป · R-T-F Framework</div>
+      <div class="header-sub">15 prompts จาก 5 use case จริง · ออกแบบจาก Pre-training Survey · คัดลอกและใช้งานได้ทันที</div>
+    </div>
+    <div class="header-badge">
+      <div class="badge-n">15</div>
+      <div class="badge-label">Prompts พร้อมใช้</div>
+      <div class="badge-sub">5 หมวดงาน · n=42</div>
+    </div>
+  </div>
+</header>
+
+<div class="legend-bar">
+  <div class="legend-inner">
+    <span class="legend-title">โครงสร้าง RTF:</span>
+    <div class="leg"><div class="leg-key" style="background:#0D9E8F">R</div><span class="leg-text">Role</span><span class="leg-desc">บทบาทที่ให้ AI รับ</span></div>
+    <div class="leg"><div class="leg-key" style="background:#065A82">T</div><span class="leg-text">Task</span><span class="leg-desc">งานที่ต้องทำ + Context</span></div>
+    <div class="leg"><div class="leg-key" style="background:#7F77DD">F</div><span class="leg-text">Format</span><span class="leg-desc">รูปแบบ Output ที่ต้องการ</span></div>
+    <div class="leg"><div class="leg-key" style="background:#D97706">📋</div><span class="leg-text">Sample</span><span class="leg-desc">ข้อมูลตัวอย่างสำหรับทดลอง</span></div>
+  </div>
+</div>
+
+<div class="tabs-bar">
+  <div class="tabs-inner" id="tabsEl"></div>
+</div>
+
+<main class="main">
+  <div class="copy-all-bar">
+    <div class="cat-info" id="catInfo"></div>
+    <button class="copy-all-btn" id="copyAllBtn">📋 คัดลอกทั้งหมดในหมวดนี้</button>
+  </div>
+  <div id="promptsEl"></div>
+</main>
+
+<footer class="site-footer">
+  <div>Prompt Library · โครงการอบรม AI สำหรับบุคลากรทางการแพทย์ · ม.นเรศวร · 22 พฤษภาคม 2569</div>
+  <div>วิทยากร: ดร.ภก.วิรุณ เวชศิริ · CEO &amp; Co-Founder, Pharm Connection · <a href="https://pharmconnection.net" style="color:var(--teal)">pharmconnection.net</a></div>
+  <div class="deploy-note">🚀 Deploy: GitHub Pages · Settings → Pages → Source: main / (root)</div>
+</footer>
+
+<script>
+const CATS = [
+  {
+    id:"doc", label:"เอกสาร & ประชุม", emoji:"📄", count:10, color:"#0D9E8F", bg:"#E1F5EE",
+    prompts:[
+      {
+        title:"สรุปรายงานการประชุม",
+        target:"เลขานุการ · เจ้าหน้าที่บริหาร · หัวหน้างานเลขานุการโรงพยาบาล",
+        role:`คุณคือเลขานุการมืออาชีพที่มีประสบการณ์ด้านการจัดทำเอกสารราชการในโรงพยาบาล`,
+        task:`นำบันทึกย่อการประชุมต่อไปนี้มาเรียบเรียงเป็นรายงานการประชุมอย่างเป็นทางการ ดึงเฉพาะสาระสำคัญ มติที่ประชุม และงานที่ได้รับมอบหมาย
+
+[วางข้อความบันทึก/ถอดเสียงการประชุมที่นี่]`,
+        format:`จัดรูปแบบเป็น 4 ส่วน:
+1. สรุปแต่ละวาระ 2–3 ประโยค
+2. มติที่ประชุม (bullet point ชัดเจน)
+3. ตาราง: งาน | ผู้รับผิดชอบ | กำหนดส่ง
+4. วาระการประชุมครั้งต่อไป
+
+ใช้ภาษาราชการ กระชับ ไม่เกิน 1 หน้า A4`,
+        sampleLabel:"บันทึกการประชุมคณะกรรมการเภสัชกรรมและการบำบัด (PTC)",
+        sample:`ประชุม PTC ครั้งที่ 5/2568 วันที่ 15 พ.ค. 2568 เวลา 13.30 น.
+ผู้เข้าร่วม: ภญ.สมหญิง รัตนากร (ประธาน), นพ.วิชาญ ศิริพงษ์, ภก.ธนพล วงษ์สวัสดิ์, พว.รัตนา ชัยสุวรรณ, นส.ภาวิณี ทองดี (เลขา)
+
+วาระ 1 รับรองรายงานการประชุมครั้งที่ 4 — รับรองโดยไม่มีการแก้ไข
+
+วาระ 2 พิจารณาเพิ่มยา Dapagliflozin ในบัญชียาโรงพยาบาล
+ภก.ธนพล: ผู้ป่วย DM+CKD ที่จะได้รับประโยชน์ ~120 รายต่อเดือน
+นพ.วิชาญ: ควรกำหนด criteria การใช้ยาชัดเจน
+มติ: อนุมัติ กำหนด criteria ภายใน 30 วัน ผู้รับผิดชอบ: ภก.ธนพล
+
+วาระ 3 รายงาน ADR ไตรมาส 2/2568
+พบ ADR 23 ราย — NSAIDs→GI bleeding 8 ราย, ACE inhibitor→ไอแห้ง 6 ราย
+พว.รัตนา: ขอเพิ่ม patient education เรื่อง NSAIDs
+มติ: จัดทำ leaflet ภายใน 2 สัปดาห์ ผู้รับผิดชอบ: งานบริการผู้ป่วยนอก
+
+วาระอื่นๆ: ประธานแจ้งการตรวจประเมิน JCI เดือนกรกฎาคม ขอให้เตรียมเอกสาร
+ประชุมครั้งต่อไป: 15 มิถุนายน 2568 เวลา 13.30 น.`
+      },
+      {
+        title:"เขียนบันทึกข้อความราชการ",
+        target:"เจ้าหน้าที่บริหาร · หัวหน้างาน",
+        role:`คุณคือผู้เชี่ยวชาญด้านการเขียนหนังสือราชการและบันทึกข้อความในระบบสุขภาพของไทย`,
+        task:`นำข้อมูลต่อไปนี้มาเขียนเป็น "บันทึกข้อความ" ให้ถูกต้องตามรูปแบบราชการไทย
+
+[วางข้อมูล/ประเด็นที่ต้องการแจ้งที่นี่]`,
+        format:`ใช้รูปแบบมาตรฐาน:
+- ที่ / วันที่ / เรื่อง / เรียน
+- เนื้อหา 3 ย่อหน้า:
+  ย่อหน้า 1: เหตุผล/ที่มา
+  ย่อหน้า 2: รายละเอียด/ข้อเท็จจริง
+  ย่อหน้า 3: ขอความอนุเคราะห์/ดำเนินการ
+- ลงนาม
+
+ไม่ใช้ภาษาพูด ความยาวไม่เกิน 300 คำ`,
+        sampleLabel:"ข้อมูลที่ต้องการเขียนเป็นบันทึกข้อความ",
+        sample:`เรื่องที่ต้องการแจ้ง:
+ขอให้บุคลากรในฝ่ายเภสัชกรรมทุกคนเข้าร่วมอบรม AI เพื่อเพิ่มประสิทธิภาพการทำงาน
+
+รายละเอียด:
+- วันศุกร์ที่ 22 พฤษภาคม 2568 เวลา 08.30–16.30 น.
+- ห้อง CC2-801 คณะแพทยศาสตร์ ม.นเรศวร
+- ขอให้นำ Notebook ส่วนตัวมาด้วย
+- กรณีติดภาระงานสำคัญ แจ้งหัวหน้างานล่วงหน้าอย่างน้อย 3 วัน
+- ผู้จัดอบรม: งานเลขานุการโรงพยาบาล ร่วมกับ Pharm Connection`
+      },
+      {
+        title:"จัดระเบียบเอกสารปีงบประมาณ",
+        target:"เจ้าหน้าที่บริหาร · เลขานุการโรงพยาบาล",
+        role:`คุณคือผู้ช่วยจัดการเอกสารที่เชี่ยวชาญการจำแนกและสรุปข้อมูลสำหรับงานธุรการโรงพยาบาล`,
+        task:`จัดหมวดหมู่รายการเอกสารต่อไปนี้ตามปีงบประมาณและประเภทงาน พร้อมสรุปแต่ละกลุ่ม
+
+[วางรายการชื่อเอกสาร/ไฟล์ที่นี่]`,
+        format:`ตอบ 2 ส่วน:
+1. ตาราง 3 คอลัมน์:
+   ชื่อเอกสาร | ประเภทงาน | ปีงบประมาณ
+
+2. สรุปแต่ละหมวดงาน 1–2 ประโยค
+   พร้อมระบุจำนวนไฟล์และรายการสำคัญที่สุด`,
+        sampleLabel:"รายการไฟล์จากโฟลเดอร์งานเภสัชกรรม",
+        sample:`รายการไฟล์:
+- รายงานประจำเดือน_ตค66.docx
+- รายงานประจำเดือน_พย66.docx
+- รายงานประจำเดือน_ธค66.docx
+- รายงานประจำเดือน_มค67.docx
+- คำสั่งแต่งตั้งคณะกรรมการ PTC_2567.pdf
+- หนังสือราชการ_งบประมาณ_ปี2567.pdf
+- หนังสือราชการ_งบประมาณ_ปี2568.pdf
+- โครงการอบรม AI_2568.docx
+- แบบประเมินความพึงพอใจ_2567.xlsx
+- แบบประเมินความพึงพอใจ_2568.xlsx
+- ADR Report Q1_2567.xlsx
+- ADR Report Q2_2567.xlsx
+- ADR Report Q1_2568.xlsx
+- แผนงานประจำปี_2568.docx
+- สรุปผลการตรวจประเมิน_2567.pdf`
+      }
+    ]
+  },
+  {
+    id:"research", label:"วิจัย & วิเคราะห์", emoji:"🔬", count:8, color:"#028090", bg:"#E0F4F7",
+    prompts:[
+      {
+        title:"วิเคราะห์ตัวชี้วัด KPI",
+        target:"เภสัชกร · พยาบาล · หัวหน้าหน่วยงาน",
+        role:`คุณคือนักวิเคราะห์ข้อมูลสุขภาพ (Healthcare Data Analyst) ที่เชี่ยวชาญการตีความตัวชี้วัดคุณภาพโรงพยาบาล`,
+        task:`วิเคราะห์ตัวชี้วัดต่อไปนี้ ระบุแนวโน้ม จุดที่ต้องเฝ้าระวัง และข้อเสนอแนะเชิงปฏิบัติ
+
+[วางข้อมูลตัวชี้วัด/ตัวเลขที่นี่]`,
+        format:`ตอบ 3 ส่วน:
+1. สรุปภาพรวม 3–5 ประโยค
+2. ตัวชี้วัดที่ต้องระวัง:
+   [ชื่อตัวชี้วัด] → ค่าปัจจุบัน / เป้าหมาย / เหตุผลที่น่ากังวล
+3. ข้อเสนอแนะ 3 ข้อ เรียงตามความเร่งด่วน
+
+เหมาะสำหรับนำเสนอต่อคณะกรรมการ`,
+        sampleLabel:"ตัวชี้วัดฝ่ายเภสัชกรรม ไตรมาส 1/2568",
+        sample:`ตัวชี้วัดฝ่ายเภสัชกรรม Q1/2568 (ม.ค.–มี.ค. 2568)
+
+1. ระยะเวลารอรับยาผู้ป่วยนอก
+   ผล: 28 นาที | เป้า: ≤25 นาที ❌
+
+2. อัตราความคลาดเคลื่อนทางยา (Medication Error)
+   ผล: 0.08% | เป้า: ≤0.10% ✓
+
+3. อัตราการจ่ายยาถูกต้องครบถ้วน
+   ผล: 98.5% | เป้า: ≥99% ❌
+
+4. จำนวนครั้งยาขาดสต็อก
+   ผล: 12 ครั้ง | เป้า: ≤5 ครั้ง ❌
+
+5. อัตราผู้ป่วยได้รับคำแนะนำยา
+   ผล: 76% | เป้า: ≥80% ❌
+
+6. ความพึงพอใจของผู้ป่วย
+   ผล: 4.2/5.0 | เป้า: ≥4.5 ❌`
+      },
+      {
+        title:"ค้นหาและสรุปหลักฐานงานวิจัย",
+        target:"เภสัชกร · อาจารย์ · นักวิจัยคลินิก",
+        role:`คุณคือผู้ช่วยวิจัยทางคลินิกที่มีความรู้ด้านการแพทย์หลักฐาน (Evidence-Based Medicine)`,
+        task:`สรุปหลักฐานทางวิทยาศาสตร์ที่มีเกี่ยวกับ [หัวข้อวิจัย] โดยเน้น meta-analysis และ systematic review ที่ตีพิมพ์ใน 5 ปีล่าสุด พร้อมระบุระดับความน่าเชื่อถือของหลักฐาน`,
+        format:`ตอบ 3 ส่วน:
+1. ประเด็นหลักจากหลักฐาน 3–5 ข้อ
+2. ตาราง: ผู้วิจัย/ปี | ประเภทการศึกษา | ข้อสรุป | ระดับหลักฐาน
+3. ช่องว่างงานวิจัยที่ยังขาด 2–3 ข้อ
+
+⚠️ ตรวจสอบแหล่งอ้างอิงจาก PubMed หรือ Cochrane ก่อนนำไปใช้จริงเสมอ`,
+        sampleLabel:"หัวข้อวิจัยตัวอย่าง",
+        sample:`หัวข้อวิจัย:
+ประสิทธิผลของการให้คำปรึกษาโดยเภสัชกร (Clinical Pharmacist Counseling) ในการเพิ่มอัตราการรับประทานยาต่อเนื่อง (Medication Adherence) ในผู้ป่วยโรคเรื้อรัง เช่น เบาหวาน ความดันโลหิตสูง และไขมันในเลือดสูง ในบริบทโรงพยาบาลในประเทศไทยและเอเชียตะวันออกเฉียงใต้`
+      },
+      {
+        title:"ออกแบบ KPI รายบุคคล",
+        target:"หัวหน้าหน่วยงาน · ฝ่ายบุคคล · ผู้บริหาร",
+        role:`คุณคือที่ปรึกษาด้านการบริหารทรัพยากรบุคคลในองค์กรสุขภาพ ที่เชี่ยวชาญการออกแบบตัวชี้วัดผลงานรายบุคคล`,
+        task:`ออกแบบตัวชี้วัดรายบุคคล (Individual KPI) สำหรับตำแหน่ง [ชื่อตำแหน่ง] ในหน่วยงาน [ชื่อหน่วยงาน]
+
+เป้าหมายองค์กร: [วางเป้าหมาย/พันธกิจที่นี่]`,
+        format:`ตาราง 4 คอลัมน์:
+ตัวชี้วัด | เป้าหมาย | วิธีวัด | น้ำหนัก (%)
+
+จำนวน 5–7 ตัวชี้วัด
+น้ำหนักรวมต้องเท่ากับ 100%
+ระบุ KPI เชิงปริมาณอย่างน้อย 3 ข้อ`,
+        sampleLabel:"ข้อมูลตำแหน่งและเป้าหมายองค์กร",
+        sample:`ตำแหน่ง: พยาบาลวิชาชีพ ระดับชำนาญการ
+หน่วยงาน: หอผู้ป่วยอายุรกรรม (Ward Med)
+
+เป้าหมายองค์กร:
+- ลดอัตราการติดเชื้อในโรงพยาบาล (HAI) < 5 ต่อ 1,000 วันนอน
+- เพิ่มความพึงพอใจผู้ป่วย ≥4.5/5.0
+- พัฒนาศักยภาพบุคลากรด้าน AI/Digital อย่างน้อย 1 หลักสูตรต่อปี
+- ลดระยะเวลาเฉลี่ยนอนโรงพยาบาล (ALOS) <7 วัน
+- บุคลากรผ่านการประเมิน Competency ≥90%`
+      }
+    ]
+  },
+  {
+    id:"present", label:"นำเสนอ & สื่อ", emoji:"📊", count:8, color:"#065A82", bg:"#E6F1FB",
+    prompts:[
+      {
+        title:"สร้าง Outline Slides",
+        target:"ทุกวิชาชีพที่ต้องนำเสนองาน",
+        role:`คุณคือผู้เชี่ยวชาญด้านการออกแบบการนำเสนอสำหรับงานวิชาการและการแพทย์`,
+        task:`สร้าง outline สำหรับ PowerPoint เรื่อง [หัวข้อ]
+กลุ่มเป้าหมาย: [ระบุ]
+ระยะเวลา: [X นาที]
+วัตถุประสงค์: [ต้องการให้ผู้ฟังรู้/ทำอะไรหลังฟัง]`,
+        format:`สำหรับแต่ละ Slide ระบุ:
+- ชื่อ Slide
+- Key message 1 ประโยค
+- Bullet points 3–4 ข้อ
+- Visual ที่แนะนำ (กราฟ / รูป / ตาราง)
+
+เรียงลำดับ: Hook → ปัญหา → ทางออก → หลักฐาน → Call to Action`,
+        sampleLabel:"โจทย์การนำเสนอตัวอย่าง",
+        sample:`หัวข้อ: AI ช่วยลดภาระงานเอกสารสำหรับพยาบาลวิชาชีพ อย่างไร?
+กลุ่มเป้าหมาย: พยาบาลวิชาชีพ ประสบการณ์ 1–15 ปี ไม่มีพื้นฐาน IT
+ระยะเวลา: 20 นาที
+วัตถุประสงค์: ให้พยาบาลเข้าใจว่า AI ช่วยงานเอกสารได้จริงอย่างไร และอยากทดลองใช้ทันที`
+      },
+      {
+        title:"สรุปเนื้อหาสำหรับ Infographic",
+        target:"นักวิชาการ · พยาบาล · เภสัชกร",
+        role:`คุณคือนักออกแบบสื่อสุขภาพที่เชี่ยวชาญการแปลงข้อมูลวิชาการให้เข้าใจง่ายสำหรับประชาชนและบุคลากร`,
+        task:`นำข้อมูลต่อไปนี้มาสรุปเป็นเนื้อหาสำหรับ Infographic 1 แผ่น
+
+[วางข้อมูล/บทความ/ผลการศึกษาที่นี่]`,
+        format:`ตอบ 4 ส่วน:
+1. Headline: ไม่เกิน 10 คำ
+2. ประเด็นหลัก 3–5 ข้อ แต่ละข้อไม่เกิน 20 คำ
+3. ตัวเลขสำคัญที่ควรเน้น (เพื่อทำ visual)
+4. Call to Action: 1 ประโยค
+
+ใช้ภาษาที่คนทั่วไปเข้าใจ ไม่ใช้ศัพท์เทคนิค`,
+        sampleLabel:"ผลการสำรวจการใช้ AI ในโรงพยาบาลไทย",
+        sample:`ผลการสำรวจการใช้ AI ในโรงพยาบาล 50 แห่งในประเทศไทย ปี 2567
+
+- บุคลากรที่เคยใช้ AI ในการทำงาน: 34%
+- กิจกรรมที่ใช้ AI บ่อยที่สุด:
+  สรุปรายงาน 52% | ค้นหาข้อมูล 41% | แปลภาษา 38%
+- ประหยัดเวลาเฉลี่ย: 2.3 ชั่วโมงต่อวัน
+- อุปสรรคหลัก:
+  กังวลความถูกต้อง 67% | ไม่รู้จะเริ่มต้น 58% | นโยบายไม่ชัด 34%
+- ความพึงพอใจโดยรวมของผู้ที่ใช้ AI: 4.1/5.0`
+      },
+      {
+        title:"เขียน Script นำเสนอ",
+        target:"ทุกวิชาชีพที่ต้องบรรยาย",
+        role:`คุณคือ Speechwriter ที่เชี่ยวชาญการเขียนสคริปต์นำเสนอทางวิชาการ สไตล์ TED Talk ฟังดูเป็นธรรมชาติไม่ใช่อ่านจากกระดาษ`,
+        task:`เขียนสคริปต์นำเสนอสำหรับเนื้อหาต่อไปนี้
+
+[วาง Outline หรือ Bullet points ของ slide ที่นี่]
+
+ระยะเวลา: [X นาที]`,
+        format:`เขียนเป็นย่อหน้าที่พูดได้ 130–150 คำต่อนาที
+ใส่:
+- [หยุด] เมื่อควร pause
+- [เปลี่ยน slide] เมื่อต้องเปลี่ยน
+- [เน้น] สำหรับประโยคสำคัญ
+
+ภาษาเป็นกันเอง ไม่ทางการจนเกินไป
+เริ่มด้วย Hook ที่ดึงดูดความสนใจ`,
+        sampleLabel:"Slide Outline ที่ต้องการเขียน Script",
+        sample:`Slide 1: "AI ไม่ได้แทนที่คุณ — มันทำงานแทนงานที่คุณเบื่อ"
+Slide 2: ปัญหา — บุคลากรพยาบาลใช้เวลา 35% ของวันกับเอกสาร (WHO 2023)
+Slide 3: ทางออก — NotebookLM สรุปเอกสารจาก 2 ชั่วโมง เหลือ 15 นาที
+Slide 4: Demo สด — ทดลองสรุปรายงานการประชุมจริง
+Slide 5: สรุปและ Q&A
+
+ระยะเวลา: 15 นาที`
+      }
+    ]
+  },
+  {
+    id:"auto", label:"Automation & ลดภาระ", emoji:"⚡", count:8, color:"#D97706", bg:"#FEF3C7",
+    prompts:[
+      {
+        title:"สร้าง Template งานซ้ำประจำเดือน",
+        target:"เจ้าหน้าที่บริหาร · เลขานุการ",
+        role:`คุณคือผู้เชี่ยวชาญด้านการออกแบบ Template และ Workflow สำหรับงานธุรการโรงพยาบาล`,
+        task:`สร้าง template มาตรฐานสำหรับ [ชื่องาน]
+
+หน่วยงาน: [ชื่อหน่วยงาน]
+ผู้รับรายงาน: [ชื่อผู้รับ/ตำแหน่ง]
+ข้อมูลที่ต้องกรอกทุกเดือน: [ระบุ]`,
+        format:`ส่งออกเป็น Template สำเร็จรูป:
+- ใช้ [วงเล็บ] ระบุช่องที่ต้องกรอก เช่น [เดือน] [จำนวนผู้ป่วย]
+- หัวข้อ Section ชัดเจน
+- มีตัวอย่างค่า เช่น [เช่น: 245 คน]
+- ท้ายเอกสาร: คำอธิบายการกรอกแต่ละช่อง 1 บรรทัด`,
+        sampleLabel:"ข้อมูลสำหรับสร้าง Template รายงานเภสัชกรรม",
+        sample:`ชื่องาน: รายงานสรุปผลการดำเนินงานงานบริหารเวชภัณฑ์ยา ประจำเดือน
+หน่วยงาน: งานบริหารเวชภัณฑ์ยา ฝ่ายเภสัชกรรม โรงพยาบาลมหาวิทยาลัยนเรศวร
+ผู้รับรายงาน: หัวหน้าฝ่ายเภสัชกรรม และผู้อำนวยการโรงพยาบาล
+
+ข้อมูลที่ต้องกรอกทุกเดือน:
+- มูลค่ายาคงคลังต้นเดือน/ปลายเดือน (บาท)
+- มูลค่าการสั่งซื้อยาทั้งหมด (บาท)
+- จำนวนรายการยาที่ขาดสต็อก (รายการ)
+- จำนวนรายการยาที่ใกล้หมดอายุ (รายการ)
+- ค่าใช้จ่ายยาต่อผู้ป่วยวันนอน (บาท/วัน)`
+      },
+      {
+        title:"Prioritize Email และข้อความสำคัญ",
+        target:"ผู้บริหาร · หัวหน้างาน · เลขานุการ",
+        role:`คุณคือผู้ช่วยส่วนตัวที่เชี่ยวชาญการจัดการข้อมูลและการสื่อสารในองค์กรสุขภาพ`,
+        task:`อ่านข้อความ/อีเมลต่อไปนี้ สรุปสิ่งที่ต้องดำเนินการ และจัดลำดับความเร่งด่วน
+
+[วาง Email หรือข้อความที่นี่]`,
+        format:`ตอบ 2 ส่วน:
+1. สรุปใจความสำคัญ 3–5 ประโยค
+
+2. Action List (ตาราง):
+   งาน | ระดับความเร่งด่วน | ต้องทำภายใน | ผู้รับผิดชอบ
+
+เรียงจากด่วนที่สุด → ปกติ`,
+        sampleLabel:"อีเมลจากหัวหน้าฝ่ายการพยาบาลเรื่อง JCI",
+        sample:`จาก: หัวหน้าฝ่ายการพยาบาล
+ถึง: หัวหน้าหอผู้ป่วยทุกท่าน
+เรื่อง: เตรียมความพร้อมรับการตรวจประเมิน JCI
+
+เรียนหัวหน้าหอผู้ป่วยทุกท่าน
+
+โรงพยาบาลจะมีการตรวจประเมิน JCI วันที่ 15–17 กรกฎาคม 2568 ขอให้ดำเนินการดังนี้:
+
+1. ส่งรายชื่อบุคลากรและ competency ที่ผ่านการประเมินปี 2568
+   → ภายในวันที่ 30 พฤษภาคมนี้
+
+2. ทบทวนและปรับปรุง SOP สำคัญให้เป็นปัจจุบัน
+   → ภายใน 15 มิถุนายน
+
+3. เตรียมหลักฐานการดำเนินงานคุณภาพ ย้อนหลัง 1 ปี
+   → ส่งให้ฝ่ายพัฒนาคุณภาพ ภายใน 15 มิถุนายน
+
+4. ตรวจสอบอุปกรณ์ทางการแพทย์ว่ามีการ calibrate ครบถ้วน
+   → รายงานผลภายใน 30 พฤษภาคม
+
+นอกจากนี้ขอให้ส่งแผนพัฒนาคุณภาพปี 2569 ภายใน 15 มิถุนายน 2568
+กรณีมีข้อสงสัย ติดต่อคุณรัตนา โทร. 1234`
+      },
+      {
+        title:"รายงานสรุปผลดำเนินงานประจำเดือน",
+        target:"หัวหน้าหน่วยงาน · เภสัชกร · พยาบาล",
+        role:`คุณคือนักวิเคราะห์งานที่เชี่ยวชาญการจัดทำรายงานผลการดำเนินงานของหน่วยงานสุขภาพ สำหรับรายงานต่อผู้บริหาร`,
+        task:`จัดทำสรุปผลการดำเนินงานประจำเดือน [เดือน/ปี] จากข้อมูลต่อไปนี้
+
+[วางข้อมูล/ตัวเลขดิบที่นี่]`,
+        format:`ตอบ 4 ส่วน:
+1. Executive Summary: 5 ประโยค
+2. ผลการดำเนินงานแต่ละตัวชี้วัด:
+   ตัวชี้วัด | ผลจริง | เป้าหมาย | สถานะ (✓/✗)
+3. ประเด็นที่ต้องปรับปรุง 3 ข้อ พร้อมเหตุผล
+4. แผนเดือนหน้า 3 ข้อ
+
+ใช้ภาษาทางการ เหมาะสำหรับรายงานต่อผู้บริหาร`,
+        sampleLabel:"ข้อมูลงานบริการผู้ป่วยนอก เมษายน 2568",
+        sample:`ข้อมูลงานบริการผู้ป่วยนอก ฝ่ายเภสัชกรรม เดือนเมษายน 2568
+
+จำนวนผู้รับบริการ:  4,823 ราย  (เป้า: 4,500)
+ระยะเวลารอรับยา:   28 นาที    (เป้า: ≤25 นาที)
+ความพึงพอใจผู้ป่วย: 4.3/5.0   (เป้า: ≥4.5)
+Medication Error:   4 ครั้ง    (เป้า: ≤3)
+ยาขาดสต็อก:        8 รายการ   (เป้า: ≤5)
+จำนวน Counseling:  1,205 ราย  (เป้า: 1,000)
+มูลค่ายาที่จ่าย:   3,245,600 บาท
+ADR Report เข้าระบบ: 2 ราย
+บุคลากรลาป่วย/ลากิจ: 45 วัน`
+      }
+    ]
+  },
+  {
+    id:"clinical", label:"ระบบคลินิก", emoji:"🏥", count:8, color:"#7F77DD", bg:"#EEEDFE",
+    prompts:[
+      {
+        title:"ตรวจสอบสิทธิและขั้นตอนการเบิก",
+        target:"งานหลักประกันสุขภาพ · การเงิน · ผู้ปฏิบัติงานบริหาร",
+        role:`คุณคือผู้ช่วยงานประกันสุขภาพที่เชี่ยวชาญระบบสิทธิการรักษาของประเทศไทย (บัตรทอง 30 บาท · ประกันสังคม · สวัสดิการข้าราชการ)`,
+        task:`ตรวจสอบข้อมูลต่อไปนี้และระบุสิทธิที่เหมาะสม พร้อมเอกสารและขั้นตอนการเบิกจ่าย
+
+อายุ: [X ปี]
+สิทธิปัจจุบัน: [ระบุ]
+ประเภทการรักษา: [ผู้ป่วยใน/นอก + โรค/หัตถการ]
+สถานพยาบาลต้นสังกัด: [ระบุ]`,
+        format:`ตอบ 4 ส่วน:
+1. สิทธิที่ใช้ได้และเงื่อนไข
+2. เอกสารที่ต้องเตรียม (bullet point)
+3. ขั้นตอนการเบิก: 1 → 2 → 3...
+4. ข้อควรระวัง/ข้อยกเว้นสำคัญ
+
+⚠️ ยืนยันกับระเบียบล่าสุดของ สปสช./กรมบัญชีกลางก่อนแจ้งผู้ป่วยเสมอ`,
+        sampleLabel:"ข้อมูลผู้ป่วยสิทธิบัตรทองที่ต้องการยานอกบัญชี",
+        sample:`อายุ: 62 ปี
+สิทธิปัจจุบัน: บัตรทอง (UC) โรงพยาบาลในสังกัด สปสช. เขต 2 พิษณุโลก
+ประเภทการรักษา: ผู้ป่วยนอก
+วินิจฉัย: DM type 2 + CKD stage 3
+ต้องการยา: Dapagliflozin ซึ่งไม่อยู่ในบัญชียาหลักแห่งชาติ
+สถานพยาบาลต้นสังกัด: โรงพยาบาลชุมชนใกล้บ้าน (refer มาจาก รพ.สต.)
+หมายเหตุ: แพทย์ระบุว่าจำเป็นต้องใช้ยานี้เนื่องจากข้อบ่งชี้ทางคลินิก`
+      },
+      {
+        title:"ข้อมูลยาสำหรับให้คำปรึกษา",
+        target:"เภสัชกร · พยาบาล · บุคลากรคลินิก",
+        role:`คุณคือเภสัชกรผู้เชี่ยวชาญที่ให้ข้อมูลยาเบื้องต้นสำหรับทีมสุขภาพ เพื่อใช้ประกอบการให้คำปรึกษา ไม่ใช่การวินิจฉัยโรค`,
+        task:`สรุปข้อมูลสำคัญของยา [ชื่อยา/กลุ่มยา] สำหรับใช้ในการให้คำปรึกษาเบื้องต้นแก่ผู้ป่วย`,
+        format:`ตอบ 5 หัวข้อ:
+1. กลไกการออกฤทธิ์ (ภาษาที่คนไข้เข้าใจ)
+2. ข้อบ่งใช้หลัก
+3. ขนาดยาทั่วไป (ผู้ใหญ่ / เด็ก)
+4. ผลข้างเคียงที่พบบ่อย (เรียงตามความถี่)
+5. ข้อควรระวัง / Contraindication สำคัญ
+
+⚠️ ยืนยันกับ Package Insert หรือเภสัชกรก่อนใช้ทางคลินิกเสมอ`,
+        sampleLabel:"ยาที่ต้องการข้อมูลสำหรับให้คำปรึกษา",
+        sample:`ชื่อยา: Metformin 500 mg (Metformin Hydrochloride)
+กลุ่มยา: Biguanide — ยาลดน้ำตาลในเลือดสำหรับ DM type 2
+บริบท: ผู้ป่วยสูงอายุ 68 ปี ได้รับยานี้ใหม่ ต้องการอธิบายการใช้ยาที่บ้านให้เข้าใจ`
+      },
+      {
+        title:"ประเมิน Early Warning Signs (NEWS2)",
+        target:"พยาบาล · นักเทคนิคการแพทย์",
+        role:`คุณคือผู้ช่วยพยาบาลวิชาชีพที่เชี่ยวชาญการเฝ้าระวังอาการและประเมินความเสี่ยงผู้ป่วย โดยใช้หลักการ NEWS2 (National Early Warning Score)`,
+        task:`ประเมินสัญญาณเตือนจากข้อมูลต่อไปนี้และแนะนำระดับการดูแลที่เหมาะสม
+
+BP: [X/Y mmHg]  HR: [X bpm]  RR: [X/min]
+Temp: [X°C]  SpO2: [X%]  GCS: [X]
+อาการ: [ระบุอาการที่พบ]`,
+        format:`ตอบ 4 ส่วน:
+1. ระดับความเร่งด่วน: 🔴 สูง / 🟡 ปานกลาง / 🟢 ต่ำ + เหตุผล
+2. สัญญาณที่น่ากังวล (bullet point)
+3. การดูแลเบื้องต้นที่แนะนำ 3–5 ข้อ
+4. เกณฑ์ที่ต้องรายงานแพทย์ทันที
+
+⚠️ ใช้ประกอบการตัดสินใจทางคลินิกเท่านั้น ไม่แทนการประเมินโดยผู้เชี่ยวชาญ`,
+        sampleLabel:"Vital Signs ผู้ป่วย Pneumonia วันที่ 2",
+        sample:`ผู้ป่วยหญิง อายุ 68 ปี วินิจฉัย Community-acquired pneumonia
+รับไว้ในหอผู้ป่วยอายุรกรรม วันที่ 2 ของการนอนโรงพยาบาล
+
+Vital Signs วัดเมื่อ 02.30 น.:
+BP: 88/52 mmHg
+HR: 118 bpm  (ปกติ 75–85 bpm)
+RR: 26 /min
+Temp: 38.9°C
+SpO2: 91%  (ใช้ O2 mask 5 L/min)
+GCS: 13/15  (E3V4M6) ลดลงจาก GCS 15 เมื่อ 4 ชม.ที่แล้ว
+
+อาการ: ซึมลง ไม่ค่อยตอบสนอง ผิวซีด เหงื่อออก มือเท้าเย็น
+ปัสสาวะ 2 ชั่วโมงที่ผ่านมา: สีเข้ม ปริมาณน้อยมาก`
+      }
+    ]
+  }
+];
+
+// ── State ──────────────────────────────────────────────
+let active = 'doc';
+const openSamples = new Set();
+
+// ── Helpers ────────────────────────────────────────────
+function copy(text, btn, done){
+  const fallback = ()=>{
+    const ta=document.createElement('textarea');ta.value=text;
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+  };
+  (navigator.clipboard ? navigator.clipboard.writeText(text).catch(fallback) : Promise.resolve(fallback()));
+  const orig = btn.innerHTML;
+  btn.innerHTML = '✓ คัดลอกแล้ว';
+  btn.classList.add('done');
+  setTimeout(()=>{btn.innerHTML=orig;btn.classList.remove('done');}, 2200);
+}
+
+function buildPrompt(p){
+  return `[R - Role]\n${p.role}\n\n[T - Task]\n${p.task}\n\n[F - Format]\n${p.format}`;
+}
+
+function buildFull(p){
+  const taskFilled = p.task.replace(/\[วาง[^\]]*\]/g,'').trimEnd();
+  return `[R - Role]\n${p.role}\n\n[T - Task]\n${taskFilled}\n\n--- ข้อมูลตัวอย่าง (${p.sampleLabel}) ---\n${p.sample}\n--- สิ้นสุดข้อมูลตัวอย่าง ---\n\n[F - Format]\n${p.format}`;
+}
+
+// ── Render ─────────────────────────────────────────────
+function render(){
+  const cat = CATS.find(c=>c.id===active);
+
+  // tabs
+  document.getElementById('tabsEl').innerHTML = CATS.map(c=>`
+    <button class="tab-btn${c.id===active?' active':''}" data-tab="${c.id}"
+      style="${c.id===active?`color:${c.color};--tab-color:${c.color}`:''}">
+      ${c.emoji} ${c.label}
+      <span class="tab-count" style="${c.id===active?`background:${c.color};color:white`:''}">${c.count}</span>
+    </button>`).join('');
+
+  // cat info bar
+  document.getElementById('catInfo').innerHTML=`
+    <span style="font-size:22px">${cat.emoji}</span>
+    <div>
+      <div class="cat-name" style="color:${cat.color}">${cat.label}</div>
+      <div class="cat-count">ผู้เข้าร่วมที่มีความต้องการนี้: <b>${cat.count} คน</b> จาก 42 คน · ${cat.prompts.length} prompts ในหมวดนี้</div>
+    </div>`;
+
+  // prompt cards
+  document.getElementById('promptsEl').innerHTML = cat.prompts.map((p,i)=>{
+    const sid = `${cat.id}-${i}`;
+    const open = openSamples.has(sid);
+    return `
+    <div class="prompt-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">${p.title}</div>
+          <div class="card-target">🎯 เหมาะสำหรับ: ${p.target}</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="rtf-section">
+          <div class="rtf-label" style="background:#0D9E8F18">
+            <span class="rtf-key" style="color:#0D9E8F">R</span>
+            <span class="rtf-name" style="color:#0D9E8F">ROLE</span>
+          </div>
+          <div class="rtf-box" style="border-left-color:#0D9E8F">${p.role}</div>
+        </div>
+        <div class="rtf-section">
+          <div class="rtf-label" style="background:${cat.color}18">
+            <span class="rtf-key" style="color:${cat.color}">T</span>
+            <span class="rtf-name" style="color:${cat.color}">TASK</span>
+          </div>
+          <div class="rtf-box" style="border-left-color:${cat.color}">${p.task.replace(/\n/g,'<br>').replace(/\[/g,'<span style="color:#D97706;font-weight:600">[').replace(/\]/g,']</span>')}</div>
+        </div>
+        <div class="rtf-section">
+          <div class="rtf-label" style="background:#7F77DD18">
+            <span class="rtf-key" style="color:#7F77DD">F</span>
+            <span class="rtf-name" style="color:#7F77DD">FORMAT</span>
+          </div>
+          <div class="rtf-box" style="border-left-color:#7F77DD">${p.format.replace(/\n/g,'<br>').replace(/⚠️/g,'<span style="color:#D97706">⚠️</span>')}</div>
+        </div>
+        <div class="sample-section">
+          <div class="sample-head" data-sid="${sid}">
+            <div class="sample-head-left">
+              <span class="sample-icon">📋</span>
+              <span class="sample-tag">SAMPLE DATA</span>
+              <span class="sample-label">${p.sampleLabel}</span>
+            </div>
+            <span class="sample-toggle">${open?'▲ ซ่อน':'▼ แสดง'}</span>
+          </div>
+          ${open?`<div class="sample-body">${p.sample.replace(/\n/g,'<br>')}</div>`:''}
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-prompt" data-action="prompt" data-cat="${cat.id}" data-idx="${i}">📝 คัดลอก Prompt</button>
+        <button class="btn btn-full" data-action="full" data-cat="${cat.id}" data-idx="${i}"
+          style="background:${cat.color};border-color:${cat.color}">🚀 คัดลอก Prompt + ตัวอย่าง</button>
+        <button class="btn btn-sample" data-action="sample" data-cat="${cat.id}" data-idx="${i}">📋 คัดลอกตัวอย่างอย่างเดียว</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  bindEvents();
+}
+
+function bindEvents(){
+  // tabs
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{active=btn.dataset.tab;openSamples.clear();render();});
+  });
+  // sample toggles
+  document.querySelectorAll('.sample-head').forEach(h=>{
+    h.addEventListener('click',()=>{
+      const sid=h.dataset.sid;
+      openSamples.has(sid)?openSamples.delete(sid):openSamples.add(sid);
+      render();
+    });
+  });
+  // copy buttons
+  document.querySelectorAll('.btn[data-action]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const cat = CATS.find(c=>c.id===btn.dataset.cat);
+      const p = cat.prompts[+btn.dataset.idx];
+      const action = btn.dataset.action;
+      if(action==='prompt') copy(buildPrompt(p),btn,'✓ คัดลอกแล้ว');
+      else if(action==='full') copy(buildFull(p),btn,'✓ คัดลอกแล้ว');
+      else copy(p.sample,btn,'✓ คัดลอกแล้ว');
+    });
+  });
+  // copy all
+  document.getElementById('copyAllBtn').addEventListener('click',function(){
+    const cat = CATS.find(c=>c.id===active);
+    const all = cat.prompts.map(p=>`=== ${p.title} ===\n${buildFull(p)}`).join('\n\n'+'─'.repeat(50)+'\n\n');
+    copy(all,this,'✓ คัดลอกทั้งหมดแล้ว');
+  });
+}
+
+render();
+</script>
+</body>
+</html>
